@@ -21,12 +21,12 @@ namespace TrafficVisualizer
             if (m.Count > 6)
                 return new GALine
                 {
-                    Callsign = m[0].Groups[2].Value,
-                    AirplaneType = m[2].Groups[2].Value,
-                    FromICAO = m[3].Groups[2].Value,
-                    ToICAO = m[4].Groups[2].Value,
-                    ArriveTime = m[5].Groups[2].Value,
-                    DepartureTime = m[6].Groups[2].Value
+                    Callsign = m[0].Groups[2].Value.Trim(),
+                    AirplaneType = m[2].Groups[2].Value.Trim(),
+                    FromICAO = m[3].Groups[2].Value.Trim(),
+                    ToICAO = m[4].Groups[2].Value.Trim(),
+                    ArriveTime = m[5].Groups[2].Value.Trim(),
+                    DepartureTime = m[6].Groups[2].Value.Trim()
                 };
             else return null;
         }

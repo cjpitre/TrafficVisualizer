@@ -38,6 +38,7 @@ namespace TrafficVisualizer
         public void Load() { 
             if (IsLoaded) return;
             string line;
+            int lineno = 2;
             // enumerate schedule
             if (File.Exists(DatabasePath + "\\schedule.csv")) {
                 Schedule = new();
@@ -65,9 +66,10 @@ namespace TrafficVisualizer
                                 if (Types.ContainsKey(schedule.AirplaneType))
                                     Types[schedule.AirplaneType]++;
                                 else Types[schedule.AirplaneType] = 1;
+                            lineno++;
                         }
                     } catch (Exception ex) {
-                        MessageBox.Show($"Error loading schedule: {ex.Message}");
+                        MessageBox.Show($"Error loading schedule on line {lineno}: {ex.Message}");
                         return;
                     }
                 }
@@ -82,7 +84,7 @@ namespace TrafficVisualizer
                             var ga = GALine.Parse(line);
                             if (ga != null) GA.Add(ga);
                         }
-
+                        lineno = 2;
                         foreach (var ga in GA) {
                             if (!string.IsNullOrEmpty(ga.ArriveTime)) {
                                 Distribution[int.Parse(ga.ArriveTime.Substring(0, 2)) * 4 + 2]++;
@@ -96,10 +98,10 @@ namespace TrafficVisualizer
                                 if (Types.ContainsKey(ga.AirplaneType))
                                     Types[ga.AirplaneType]++;
                                 else Types[ga.AirplaneType] = 1;
-
+                            lineno++;
                         }
                     } catch (Exception ex){
-                        MessageBox.Show($"Error loading ga schedule: {ex.Message}");
+                        MessageBox.Show($"Error loading ga schedule line {lineno}: {ex.Message}");
                         return;
                     }
                 }

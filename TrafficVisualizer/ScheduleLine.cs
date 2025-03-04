@@ -27,16 +27,16 @@ namespace TrafficVisualizer
             if (m.Count > 9) 
                 return new ScheduleLine
                 {
-                    OperatorColor = m[0].Groups[2].Value,
-                    AirlineCallsign = m[1].Groups[2].Value,
-                    FlightNumber = m[2].Groups[2].Value,
-                    AirplaneType = m[3].Groups[2].Value,
-                    FromICAO = m[4].Groups[2].Value,
-                    ToICAO = m[5].Groups[2].Value,
-                    ApproachTime = m[6].Groups[2].Value,
-                    DepartureTime = m[7].Groups[2].Value,
-                    ApproachAltitude = m[8].Groups[2].Value,
-                    Special = m[9].Groups[2].Value
+                    OperatorColor = m[0].Groups[2].Value.Trim(),
+                    AirlineCallsign = m[1].Groups[2].Value.Trim(),
+                    FlightNumber = m[2].Groups[2].Value.Trim(),
+                    AirplaneType = m[3].Groups[2].Value.Trim(),
+                    FromICAO = m[4].Groups[2].Value.Trim(),
+                    ToICAO = m[5].Groups[2].Value.Trim(),
+                    ApproachTime = m[6].Groups[2].Value.Trim(),
+                    DepartureTime = m[7].Groups[2].Value.Trim(),
+                    ApproachAltitude = m[8].Groups[2].Value.Trim(),
+                    Special = m[9].Groups[2].Value.Trim()
                 };
             else return null;
         }
