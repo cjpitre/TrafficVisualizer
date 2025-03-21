@@ -33,6 +33,18 @@ namespace TrafficVisualizer
             DependencyProperty.Register("Database", typeof(Database), typeof(DatabaseChart), new PropertyMetadata(null));
 
 
+
+        public bool SeparateCargo
+        {
+            get { return (bool)GetValue(SeparateCargoProperty); }
+            set { SetValue(SeparateCargoProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for SeparateCargo.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SeparateCargoProperty =
+            DependencyProperty.Register("SeparateCargo", typeof(bool), typeof(DatabaseChart), new PropertyMetadata(false));
+
+
         public DatabaseChart()
         {
             InitializeComponent();
@@ -45,7 +57,7 @@ namespace TrafficVisualizer
             if (Database==null) return;
             int max = 0;
             for (int i = 0; i < 24; i++) {
-                int v = Database.Distribution[i * 4] + Database.Distribution[i * 4 + 1] + Database.Distribution[i * 4 + 2] + Database.Distribution[i * 4 + 3];
+                int v = Database.Distribution[i * 6] + Database.Distribution[i * 6 + 1] + Database.Distribution[i * 6 + 2] + Database.Distribution[i * 6 + 3] + Database.Distribution[i * 6 + 4] + Database.Distribution[i * 6 + 5];
                 max=Math.Max(max, v);
             }
             if (max == 0) return;
@@ -75,7 +87,7 @@ namespace TrafficVisualizer
             for (int h = 0; h < 24; h++) {
                 int l = 0;
                 // arrivals
-                int ht = Database.Distribution[h * 4];
+                int ht = Database.Distribution[h * 6];
                 if (ht>0) {
                     Rectangle r = new Rectangle { HorizontalAlignment = HorizontalAlignment.Stretch, Height = scale * ht, VerticalAlignment = VerticalAlignment.Bottom, Fill = Brushes.Orange, Stroke=Brushes.Black, Tag = "*", ToolTip=$"{ht} arrivals" };
                     Grid.SetColumn(r, h + 1);
@@ -89,8 +101,23 @@ namespace TrafficVisualizer
                     }
                     l += ht;
                 }
+                // cargo arrivals
+                ht = Database.Distribution[h * 6+4];
+                if (ht > 0) {
+                    Rectangle r = new Rectangle { HorizontalAlignment = HorizontalAlignment.Stretch, Height = scale * ht, VerticalAlignment = VerticalAlignment.Bottom, Fill = Brushes.Tomato, Margin = new Thickness(0, 0, 0, l * scale), Stroke = Brushes.Black, Tag = "*", ToolTip = $"{ht} cargo arrivals" };
+                    Grid.SetColumn(r, h + 1);
+                    Grid.SetRow(r, 1);
+                    G.Children.Add(r);
+                    if (ht * scale > 20) {
+                        TextBlock t = new TextBlock { Text = ht.ToString(), TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Bottom, Tag = "*", Margin = new Thickness(0, 0, 0, (l + ht / 2.0) * scale - 7) };
+                        Grid.SetColumn(t, h + 1);
+                        Grid.SetRow(t, 1);
+                        G.Children.Add(t);
+                    }
+                    l += ht;
+                }
                 // departures
-                ht = Database.Distribution[h * 4+1];
+                ht = Database.Distribution[h * 6+1];
                 if (ht > 0) {
                     Rectangle r = new Rectangle { HorizontalAlignment = HorizontalAlignment.Stretch, Height = scale * ht, VerticalAlignment = VerticalAlignment.Bottom, Fill = Brushes.SkyBlue,Margin=new Thickness(0,0,0,l*scale), Stroke = Brushes.Black, Tag = "*", ToolTip = $"{ht} departures" };
                     Grid.SetColumn(r, h + 1);
@@ -104,8 +131,23 @@ namespace TrafficVisualizer
                     }
                     l += ht;
                 }
+                // cargo departures
+                ht = Database.Distribution[h * 6 + 5];
+                if (ht > 0) {
+                    Rectangle r = new Rectangle { HorizontalAlignment = HorizontalAlignment.Stretch, Height = scale * ht, VerticalAlignment = VerticalAlignment.Bottom, Fill = Brushes.CadetBlue, Margin = new Thickness(0, 0, 0, l * scale), Stroke = Brushes.Black, Tag = "*", ToolTip = $"{ht} cargo departures" };
+                    Grid.SetColumn(r, h + 1);
+                    Grid.SetRow(r, 1);
+                    G.Children.Add(r);
+                    if (ht * scale > 20) {
+                        TextBlock t = new TextBlock { Text = ht.ToString(), TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Bottom, Tag = "*", Margin = new Thickness(0, 0, 0, (l + ht / 2.0) * scale - 7) };
+                        Grid.SetColumn(t, h + 1);
+                        Grid.SetRow(t, 1);
+                        G.Children.Add(t);
+                    }
+                    l += ht;
+                }
                 // ga arrivals
-                ht = Database.Distribution[h * 4 + 2];
+                ht = Database.Distribution[h * 6 + 2];
                 if (ht > 0) {
                     Rectangle r = new Rectangle { HorizontalAlignment = HorizontalAlignment.Stretch, Height = scale * ht, VerticalAlignment = VerticalAlignment.Bottom, Fill = Brushes.Coral, Margin = new Thickness(0, 0, 0, l * scale), Stroke = Brushes.Black, Tag = "*", ToolTip = $"{ht} GA arrivals" };
                     Grid.SetColumn(r, h + 1);
@@ -120,7 +162,7 @@ namespace TrafficVisualizer
                     l += ht;
                 }
                 // ga departures
-                ht = Database.Distribution[h * 4 + 3];
+                ht = Database.Distribution[h * 6 + 3];
                 if (ht > 0) {
                     Rectangle r = new Rectangle { HorizontalAlignment = HorizontalAlignment.Stretch, Height = scale * ht, VerticalAlignment = VerticalAlignment.Bottom, Fill = Brushes.LightGreen, Margin = new Thickness(0, 0, 0, l * scale), Stroke = Brushes.Black, Tag = "*", ToolTip = $"{ht} GA departures" };
                     Grid.SetColumn(r, h + 1);

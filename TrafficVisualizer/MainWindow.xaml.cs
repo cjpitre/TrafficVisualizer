@@ -61,8 +61,9 @@ namespace TrafficVisualizer
         private void lvDatabases_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Database? database = lvDatabases.SelectedItem as Database;
-            database?.Load();
+            database?.Load(sepCargo.IsChecked==true);
             if (database?.IsLoaded == true) {
+                Chart.SeparateCargo = sepCargo.IsChecked == true; 
                 Chart.C.DataContext = database;
                 Chart.lbAircraft.ItemsSource = database.TopAircraft;
                 Chart.lbOperators.ItemsSource = database.TopOperators;

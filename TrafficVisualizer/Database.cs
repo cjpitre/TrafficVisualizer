@@ -19,9 +19,11 @@ namespace TrafficVisualizer
         public int GAArrivals { get; set; }
         public int Departures { get; set; }
         public int Arrivals { get; set; }
+        public int CargoArrivals { get; set; }
+        public int CargoDepartures { get; set; }
         public List<GALine> GA { get; set; } = new();
 
-        public ushort[] Distribution = new ushort[96];
+        public ushort[] Distribution = new ushort[144];
         public Dictionary<string,ushort> Operators = new();
         public Dictionary<string, ushort> Types = new();
         public List<ItemCount> TopOperators { get; set; } = new();
@@ -35,11 +37,19 @@ namespace TrafficVisualizer
             IsLoaded = false;
         }
 
-        public void Load() { 
-            if (IsLoaded) return;
+        private bool sepCargo = false;
+        public void Load(bool separateCargo=false) { 
+            if (IsLoaded && separateCargo==sepCargo) return;
             string line;
             int lineno = 2;
             // enumerate schedule
+            Distribution = new ushort[144];
+            Arrivals = 0;
+            CargoArrivals = 0;
+            CargoDepartures = 0;
+            Departures = 0;
+            GAArrivals = 0;
+            GADepartures = 0;
             if (File.Exists(DatabasePath + "\\schedule.csv")) {
                 Schedule = new();
                 using (TextReader reader = new StreamReader(DatabasePath + "\\schedule.csv")) { 
@@ -51,12 +61,22 @@ namespace TrafficVisualizer
                         }
                         foreach (var schedule in Schedule) {
                             if (!string.IsNullOrEmpty(schedule.ApproachTime)) {
-                                Distribution[int.Parse(schedule.ApproachTime.Substring(0, 2)) * 4]++;
-                                Arrivals++;
+                                if (separateCargo && schedule.IsCargo) {
+                                    Distribution[int.Parse(schedule.ApproachTime.Substring(0, 2)) * 6 + 4]++;
+                                    CargoArrivals++;
+                                } else {
+                                    Distribution[int.Parse(schedule.ApproachTime.Substring(0, 2)) * 6]++;
+                                    Arrivals++;
+                                }
                             }
                             if (!string.IsNullOrEmpty(schedule.DepartureTime)) {
-                                Distribution[int.Parse(schedule.DepartureTime.Substring(0, 2)) * 4 + 1]++;
-                                Departures++;
+                                if (separateCargo && schedule.IsCargo) {
+                                    Distribution[int.Parse(schedule.DepartureTime.Substring(0, 2)) * 6 + 5]++;
+                                    CargoDepartures++;
+                                } else {
+                                    Distribution[int.Parse(schedule.DepartureTime.Substring(0, 2)) * 6 + 1]++;
+                                    Departures++;
+                                }
                             }
                             if (!string.IsNullOrEmpty(schedule.OperatorColor))
                                 if (Operators.ContainsKey(schedule.OperatorColor))
@@ -87,11 +107,11 @@ namespace TrafficVisualizer
                         lineno = 2;
                         foreach (var ga in GA) {
                             if (!string.IsNullOrEmpty(ga.ArriveTime)) {
-                                Distribution[int.Parse(ga.ArriveTime.Substring(0, 2)) * 4 + 2]++;
+                                Distribution[int.Parse(ga.ArriveTime.Substring(0, 2)) * 6 + 2]++;
                                 GAArrivals++;
                             }
                             if (!string.IsNullOrEmpty(ga.DepartureTime)) {
-                                Distribution[int.Parse(ga.DepartureTime.Substring(0, 2)) * 4 + 3]++;
+                                Distribution[int.Parse(ga.DepartureTime.Substring(0, 2)) * 6 + 3]++;
                                 GADepartures++;
                             }
                             if (!string.IsNullOrEmpty(ga.AirplaneType))
@@ -110,6 +130,7 @@ namespace TrafficVisualizer
             TopOperators = Operators.Keys.Select(o => new ItemCount { Item = o, Count = Operators[o] }).OrderBy(o => -o.Count).Take(10).ToList();
             TopAircraft = Types.Keys.Select(o =>new ItemCount { Item = o, Count = Types[o] }).OrderBy(o => -o.Count).Take(10).ToList();
             IsLoaded = true;
+            sepCargo = separateCargo;
         }
     }
 

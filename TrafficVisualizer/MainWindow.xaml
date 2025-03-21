@@ -68,6 +68,9 @@
                 </Style>
             </local:DatabaseChart.Style>
         </local:DatabaseChart>
-        <Button Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="Button_Click">Save PNG</Button>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Column="1" Grid.Row="1">
+            <CheckBox Name="sepCargo">Separate Cargo</CheckBox>
+        <Button Click="Button_Click">Save PNG</Button>
+        </StackPanel>
     </Grid>
 </Window>

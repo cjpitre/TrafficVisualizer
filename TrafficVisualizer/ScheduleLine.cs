@@ -21,6 +21,8 @@ namespace TrafficVisualizer
         public string? Special { get; set; }
         public string? Registration { get; set; }
 
+        public bool IsCargo => Special != null && Special.ToLower().Contains("cargo");
+
         public static ScheduleLine? Parse(string line)
         {
             var m = new Regex("(?:^|,)(?=[^\"]|(\")?)\"?((?(1)[^\"]*|[^,\"]*))\"?(?=,|$)").Matches(line);
